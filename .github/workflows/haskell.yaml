@@ -17,6 +17,19 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+
+    - name : Cache GHC
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-ghc
+      with:
+        path: /usr/local/.ghcup
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.cabal') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
     - name: Setup Haskell
       uses: haskell-actions/setup@v2
       with:
@@ -27,7 +40,7 @@ jobs:
       id: z3
       uses: cda-tum/setup-z3@v1
 
-    - name: Cache
+    - name: Cache Cabal packages
       uses: actions/cache@v3
       env:
         cache-name: cache-cabal
@@ -43,7 +56,9 @@ jobs:
       run: |
         cabal update
         cabal build --only-dependencies --enable-tests
+
     - name: Build
       run: cabal build --enable-tests --enable-benchmarks
+
     - name: Run tests
       run: cabal test --test-show-details=streaming
