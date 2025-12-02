@@ -2,7 +2,7 @@ module Utils
   ( scc
   , Matrix, setMatrix, setMatrixSafe, getMatrix, findMatrix, modifyMatrix
   , parMap, parMapM, parFind
-  , allPairs)
+  , allPairs, splitAtInterval)
   where
 
 import Control.Concurrent ( forkIO, newEmptyMVar, readMVar, putMVar
@@ -111,3 +111,9 @@ parMapM f xs = do
 
 allPairs :: [b] -> [(b, b)]
 allPairs xs = [(x, y) | (x:ys) <- tails xs, y <- ys]
+
+splitAtInterval :: Int -> String -> [String]
+splitAtInterval n xs = if length xs <= n
+  then [xs] else x' : splitAtInterval n xs'
+  where
+    (x', xs') = splitAt n xs
