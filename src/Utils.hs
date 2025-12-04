@@ -2,7 +2,7 @@ module Utils
   ( scc
   , Matrix, setMatrix, setMatrixSafe, getMatrix, findMatrix, modifyMatrix
   , parMap, parMapM, parFind
-  , allPairs, splitAtInterval)
+  , allPairs, splitAtInterval, dir8)
   where
 
 import Control.Concurrent ( forkIO, newEmptyMVar, readMVar, putMVar
@@ -117,3 +117,6 @@ splitAtInterval n xs = if length xs <= n
   then [xs] else x' : splitAtInterval n xs'
   where
     (x', xs') = splitAt n xs
+
+dir8 :: Int -> Int -> [(Int, Int)]
+dir8 x y = [(x+dx, y+dy) | dx <- [-1..1], dy <- [-1..1], (dx /= 0) || (dy /= 0)]
