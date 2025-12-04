@@ -17,7 +17,7 @@ maxJoltsWith k xs = m : maxJoltsWith k' xs'
     xs' = drop 1 $ dropWhile (/= m) xs
 
 fromList :: [Integer] -> Integer
-fromList = sum . zipWith (\e n -> 10^e * n) [(0::Int)..] . reverse
+fromList = foldl (\s d -> s * 10 + d) 0
 
 dropBack :: Int -> [a] -> [a]
 dropBack n = reverse . drop n . reverse
