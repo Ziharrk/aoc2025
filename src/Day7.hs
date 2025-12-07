@@ -18,17 +18,17 @@ day7 = do
   input <- V.fromList . map (V.fromList . map parse) . lines
              <$> readFile "input/day7"
   putStr "Part 1: "
-  let (p1, p2, _) = simulate input
+  let (p1, p2) = simulate input
   print p1
   putStr "Part 2: "
   print p2
 
-simulate :: Matrix Beam -> (Int, Integer, Matrix Beam)
+simulate :: Matrix Beam -> (Int, Integer)
 simulate m'' = go m'' 1 0
   where
     lm = V.length m''
     go m i s
-      | i >= lm    = (s, sum $ fmap beamNum (m V.! (i-1)), m)
+      | i >= lm    = (s, sum $ fmap beamNum (m V.! (i-1)))
       | otherwise =
       let row = m V.! i
           prevRow = m V.! (i-1)
