@@ -38,7 +38,9 @@ common ghc_options
                       pqueue            ^>= 1.5,
                       maximal-cliques   ^>= 0.1,
                       sbv               ^>= 10.12,
-                      JuicyPixels       ^>= 3.3.9
+                      JuicyPixels       ^>= 3.3.9,
+                      mtl               ^>= 2.3,
+                      equivalence       ^>= 0.4
 
 library
     import:           ghc_options
