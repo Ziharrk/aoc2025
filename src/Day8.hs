@@ -42,4 +42,4 @@ triple _         = error "invalid input"
 
 distSq3 :: C3 -> C3 -> Int
 distSq3 (x1, y1, z1) (x2, y2, z2) = sq (x1-x2) + sq (y1-y2) + sq (z1-z2)
-  where sq = (^(2::Int))
+  where sq x = x * x

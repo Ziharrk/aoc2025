@@ -24,30 +24,28 @@ day7 = do
   print p2
 
 simulate :: Matrix Beam -> (Int, Integer)
-simulate m'' = go m'' 1 0
+simulate m = go (m V.! 0) 1 0
   where
-    lm = V.length m''
-    go m i s
-      | i >= lm    = (s, sum $ fmap beamNum (m V.! (i-1)))
+    lm = V.length m
+    go prevRow i s
+      | i >= lm   = (s, sum $ fmap beamNum prevRow)
       | otherwise =
       let row = m V.! i
-          prevRow = m V.! (i-1)
           rowsWith a = concatMap (\j -> [(j, n) | Beam n <- [prevRow V.! j]]) $
             V.findIndices (==a) row
           actSplit = rowsWith Split
           continuing = rowsWith Empty
           allBeams = second Beam <$> combine (concatMap neigh actSplit ++ continuing)
           row' = V.update row (V.fromList allBeams)
-          m' = V.update m (V.fromList [(i, row')])
-      in go m' (i+1) (s + length actSplit)
+      in go row' (i+1) (s + length actSplit)
 
     neigh (n, b) = [(n-1, b), (n+1, b)]
     combine xs = dedup $ sortOn fst xs
     dedup [] = []
     dedup [x] = [x]
-    dedup ((i, n):(j, m):xs)
-      | i == j = dedup ((i, n+m):xs)
-      | otherwise = (i, n) : dedup ((j, m):xs)
+    dedup ((i1, n1):(i2, n2):xs)
+      | i1 == i2  = dedup ((i1, n1+n2):xs)
+      | otherwise = (i1, n1) : dedup ((i2, n2):xs)
 
 parse :: Char -> Beam
 parse 'S' = Beam 1

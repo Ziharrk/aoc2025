@@ -13,8 +13,5 @@ maxJoltsWith 0 _  = []
 maxJoltsWith k xs = m : maxJoltsWith k' xs'
   where
     k' = k-1
-    m = maximum (dropBack k' xs)
+    m = maximum (take (length xs - k') xs)
     xs' = drop 1 $ dropWhile (/= m) xs
-
-dropBack :: Int -> [a] -> [a]
-dropBack n = reverse . drop n . reverse
