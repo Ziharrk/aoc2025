@@ -5,6 +5,7 @@ import Data.SBV
   ( OptimizeResult (..), OptimizeStyle (..)
   , SymVal, SBV, getModelValue
   , minimize, optimize, constrain, literal, symbolic
+  , fromSDouble, sRoundTowardZero
   , (.>=), (.==), sMod)
 import Text.Parsec
     ( Parsec
@@ -15,21 +16,21 @@ import Text.Parsec.String (parseFromFile)
 
 import Utils (parMapM)
 
-data Machine = MkM { states :: [Bool], buttons :: [[Int]], joltages :: [Integer] }
+data Machine = MkM { states :: [Bool], buttons :: [[Int]], joltages :: [Double] }
   deriving Show
 
 day10 :: IO ()
 day10 = do
   Right input <- parseFromFile (many1 parseMachine <* eof) "input/day10"
   putStr "Part 1: "
-  let oddPresses xs = 1 .== (sum xs `sMod` 2)
+  let oddPresses xs = 1 .== (sum (map (fromSDouble sRoundTowardZero) xs) `sMod` 2)
   res1 <- parMapM (fewestPresses oddPresses states) input
   print (sum res1)
   putStr "Part 2: "
   res2 <- parMapM (fewestPresses sum joltages) input
   print (sum res2)
 
-fewestPresses :: SymVal a => ([SBV Integer] -> SBV a) -> (Machine -> [a]) -> Machine -> IO Integer
+fewestPresses :: SymVal a => ([SBV Double] -> SBV a) -> (Machine -> [a]) -> Machine -> IO Integer
 fewestPresses how what m@(MkM _ buttons _) = getRes <$> optimize Lexicographic (do
   -- create SMT variables for each button
   vs <- mapM mkVar [0 .. length buttons - 1]
