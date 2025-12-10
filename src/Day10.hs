@@ -15,7 +15,7 @@ import Text.Parsec.String (parseFromFile)
 
 import Utils (parMapM)
 
-data Machine = MkM { states :: [Bool], buttons :: [[Int]], joltages :: [Integer] }
+data Machine = MkM { states :: [Bool], buttons :: [[Int]], joltages :: [Double] }
   deriving Show
 
 day10 :: IO ()
@@ -29,7 +29,7 @@ day10 = do
   res2 <- parMapM (fewestPresses sum joltages) input
   print (sum res2)
 
-fewestPresses :: SymVal a => ([SBV Integer] -> SBV a) -> (Machine -> [a]) -> Machine -> IO Integer
+fewestPresses :: SymVal a => ([SBV Double] -> SBV a) -> (Machine -> [a]) -> Machine -> IO Integer
 fewestPresses how what m@(MkM _ buttons _) = getRes <$> optimize Lexicographic (do
   -- create SMT variables for each button
   vs <- mapM mkVar [0 .. length buttons - 1]
