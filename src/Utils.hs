@@ -99,7 +99,8 @@ parFind p as = do
 parMapM :: NFData b => (a -> IO b) -> [a] -> IO [b]
 parMapM f xs = do
   num <- getNumCapabilities
-  vs <- mapM go (chunksOf (length xs `div` num) xs)
+  let c = max 1 (length xs `div` num)
+  vs <- mapM go (chunksOf c xs)
   concat <$> mapM readMVar vs
   where
     go x = do
