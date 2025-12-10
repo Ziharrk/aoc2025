@@ -5,6 +5,7 @@ import Data.SBV
   ( OptimizeResult (..), OptimizeStyle (..)
   , SymVal, SBV, getModelValue
   , minimize, optimize, constrain, literal, symbolic
+  , fromSDouble, sRoundTowardZero
   , (.>=), (.==), sMod)
 import Text.Parsec
     ( Parsec
@@ -22,7 +23,7 @@ day10 :: IO ()
 day10 = do
   Right input <- parseFromFile (many1 parseMachine <* eof) "input/day10"
   putStr "Part 1: "
-  let oddPresses xs = 1 .== (sum xs `sMod` 2)
+  let oddPresses xs = 1 .== (sum (map (fromSDouble sRoundTowardZero) xs) `sMod` 2)
   res1 <- parMapM (fewestPresses oddPresses states) input
   print (sum res1)
   putStr "Part 2: "
