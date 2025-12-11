@@ -126,7 +126,6 @@ splitAtInterval n xs = if length xs <= n
 dir8 :: Int -> Int -> [(Int, Int)]
 dir8 x y = [(x+dx, y+dy) | dx <- [-1..1], dy <- [-1..1], (dx /= 0) || (dy /= 0)]
 
-
 iterateNM :: Monad m => Int -> (a -> m a) -> a -> m a
 iterateNM 0 _ a = return a
 iterateNM n f a = f a >>= iterateNM (n-1) f
@@ -134,7 +133,6 @@ iterateNM n f a = f a >>= iterateNM (n-1) f
 untilAll :: Monad m => ([a] -> m [a]) -> [a] -> m ()
 untilAll _ [] = return ()
 untilAll f xs = f xs >>= untilAll f
-
 
 memoFix :: Ord a => ((a -> b) -> a -> b) -> a -> b
 memoFix f = fix (memo . f)
