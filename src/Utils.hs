@@ -1,7 +1,7 @@
 module Utils
   ( scc
   , Matrix, setMatrix, setMatrixSafe, getMatrix, findMatrix, modifyMatrix
-  , parMap, parMapM, parFind
+  , parMap, parMapM, parFind, memoFix
   , allPairs, splitAtInterval, dir8, untilAll, iterateNM)
   where
 
@@ -9,10 +9,14 @@ import Control.Concurrent ( forkIO, newEmptyMVar, readMVar, putMVar
                           , getNumCapabilities, newMVar, modifyMVar )
 import Control.DeepSeq (force, NFData)
 import Control.Monad (replicateM_)
+import Data.Function (fix)
+import qualified Data.Map as Map
+import Data.IORef ( newIORef, readIORef, writeIORef )
 import qualified Data.Set as Set
 import Data.List.Extra (chunksOf, tails)
 import Data.Vector (Vector)
 import qualified Data.Vector as V
+import System.IO.Unsafe (unsafePerformIO)
 
 -- Adapted from curry-frontend, with code deduplication
 scc :: Eq b => (a -> [b]) -- ^entities defined by node
@@ -130,3 +134,18 @@ iterateNM n f a = f a >>= iterateNM (n-1) f
 untilAll :: Monad m => ([a] -> m [a]) -> [a] -> m ()
 untilAll _ [] = return ()
 untilAll f xs = f xs >>= untilAll f
+
+
+memoFix :: Ord a => ((a -> b) -> a -> b) -> a -> b
+memoFix f = fix (memo . f)
+  where
+    {-# NOINLINE ref #-}
+    ref = unsafePerformIO $ newIORef Map.empty
+    memo f' c = unsafePerformIO $ do
+      cache <- readIORef ref
+      case Map.lookup c cache of
+        Just v  -> return v
+        Nothing -> do
+          let v = f' c
+          writeIORef ref (Map.insert c v cache)
+          return v
