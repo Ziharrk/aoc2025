@@ -36,7 +36,7 @@ fits :: [Set Shape] -> Tree -> Bool
 fits shapeSets (MkT mx my ns) =
   memoFix go (Set.fromList [(x, y) | x <- [0..mx-1], y <- [0..my-1]], zip [0..] ns)
   where
-    go go' (_, []) = True
+    go _   (_, []) = True
     go go' (marks, (_, 0):ns') = go' (marks, ns')
     go go' (marks, (i, n):ns') =
       any (any recurse . vary) (shapeSets !! i)
