@@ -37,7 +37,7 @@ tailAfterFirst y (z:zs)
   | otherwise = tailAfterFirst y zs
 
 -- part1ViaTypes :: Integer
--- part1ViaTypes = natVal' (Proxy @(Sum (MapJolts 2 Input)))
+-- part1ViaTypes = natVal' @(Sum (MapJolts 2 Input))
 
 natVal' :: forall n. KnownNat n => Integer
 natVal' = natVal (Proxy @n)
